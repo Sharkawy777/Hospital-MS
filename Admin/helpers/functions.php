@@ -161,7 +161,7 @@ function Messages($Message)
 
 function Url($url = null){
 
-    return   'http://'.$_SERVER['HTTP_HOST'].'/group10/week3/admin/'.$url;
+    return   'http://'.$_SERVER['HTTP_HOST'].'/Hospital-MS/admin/'.$url;
 
 }
 

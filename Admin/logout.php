@@ -7,7 +7,7 @@
  
  session_destroy();
 
- header("location: ".Url('/login.php'));
+ header("location: ".Url('login.php'));
 
 
 ?>

@@ -3,7 +3,7 @@ require '../helpers/dbConnection.php';
 require '../helpers/functions.php';
 ################################################################
 # Fetch  User Data .......
-$sql = 'select users.*,roles.title  from  users inner join roles on users.role_id = roles.id';
+$sql = 'select users.*,roles.title  from  users inner join roles on users.role_id = roles.id where roles.title = "admin"';
 $op = mysqli_query($con, $sql);
 ################################################################
 
@@ -18,20 +18,20 @@ require '../layouts/sidNav.php';
     <div class="container-fluid">
         <h1 class="mt-4">Dashboard</h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Dashboard/Users/display</li>
-            <?php 
+            <li class="breadcrumb-item active">Dashboard/Admins/display</li>
+            <?php
             echo '<br>';
-           if(isset($_SESSION['Message'])){
-             Messages($_SESSION['Message']);
-          
-              # Unset Session ... 
-              unset($_SESSION['Message']);
-              }
-        
-             ?>
+            if(isset($_SESSION['Message'])){
+                Messages($_SESSION['Message']);
+
+                # Unset Session ...
+                unset($_SESSION['Message']);
+            }
+
+            ?>
         </ol>
         <a href='create.php'
-           class='btn btn-danger m-r-1em'>Create new user</a>
+           class='btn btn-danger m-r-1em'>Create new admin</a>
 
         <div class="card mb-4">
 
@@ -39,33 +39,33 @@ require '../layouts/sidNav.php';
                 <div class="table-responsive">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>phone</th>
-                                <th>role</th>
-                                <th>image</th>
-                                <th>Action</th>
-                            </tr>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>phone</th>
+                            <th>role</th>
+                            <th>image</th>
+                            <th>Action</th>
+                        </tr>
                         </thead>
                         <tfoot>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>phone</th>
-                                <th>role</th>
-                                <th>image</th>
-                                <th>Action</th>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>phone</th>
+                            <th>role</th>
+                            <th>image</th>
+                            <th>Action</th>
                         </tfoot>
                         <tbody>
 
-                            <?php 
-                                        # Fetch Data ...... 
-                                        while($data = mysqli_fetch_assoc($op)){
-                                      
-                                    ?>
+                        <?php
+                        # Fetch Data ......
+                        while($data = mysqli_fetch_assoc($op)){
+
+                            ?>
 
                             <tr>
                                 <td><?php echo $data['id']; ?></td>
@@ -78,15 +78,15 @@ require '../layouts/sidNav.php';
 
                                 <td>
                                     <a href='delete.php?id=<?php echo $data['id']; ?>'
-                                        class='btn btn-danger m-r-1em'>Delete</a>
+                                       class='btn btn-danger m-r-1em'>Delete</a>
                                     <a href='edit.php?id=<?php echo $data['id']; ?>' class='btn btn-primary m-r-1em'>Edit</a>
                                 </td>
 
                             </tr>
 
-                            <?php 
-                                        }
-                                    ?>
+                            <?php
+                        }
+                        ?>
                         </tbody>
                     </table>
                 </div>

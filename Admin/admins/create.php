@@ -1,7 +1,6 @@
 <?php
-require '..../helpers/dbConnection.php';
-require '..../helpers/functions.php';
-
+require '../helpers/dbConnection.php';
+require '../helpers/functions.php';
 
 #########################################################################
 # Fetch Roles .... 
@@ -90,7 +89,7 @@ require '../layouts/sidNav.php';
     <div class="container-fluid">
         <h1 class="mt-4">Dashboard</h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Dashboard/Users/Create</li>
+            <li class="breadcrumb-item active">Dashboard/Admins/Create</li>
 
             <?php
             echo '<br>';
@@ -105,7 +104,8 @@ require '../layouts/sidNav.php';
 
         </ol>
 
-
+        <a href='index.php'
+           class='btn btn-danger m-r-1em'>Back</a>
         <div class="card mb-4">
 
             <div class="card-body">

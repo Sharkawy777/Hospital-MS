@@ -6,7 +6,7 @@ require '../helpers/functions.php';
 $id = $_GET['id'];
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
-    $sql = "select * from roles";
+    $sql = "select * from roles where roles.title = 'patient'";
     $RoleOp = mysqli_query($con, $sql);
 
     $sql = "select * from users where id = '$id'";
@@ -94,7 +94,7 @@ require '../layouts/sidNav.php';
     <div class="container-fluid">
         <h1 class="mt-4">Dashboard</h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Dashboard/Roles/Edit</li>
+            <li class="breadcrumb-item active">Dashboard/Patient/Edit</li>
 
             <?php
             echo '<br>';
@@ -106,32 +106,40 @@ require '../layouts/sidNav.php';
             }
             ?>
         </ol>
-
+        <a href='index.php'
+           class='btn btn-danger m-r-1em'>Back</a>
 
         <div class="card mb-4">
 
             <div class="card-body">
-                <form action="edit.php?id=<?php echo ($data['id']); ?>" method="post"
-                      enctype="multipart/form-data">
+                <form action="edit.php?id=<?php if ($data['id'] == $_SESSION['user']['id']) echo($data['id']); else {exit();}?>" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="exampleInputName">Name</label>
                         <input type="text" class="form-control" id="exampleInputName" name="name"
                                aria-describedby="" value="<?php echo $data['name']; ?>">
                     </div>
 
+
                     <label for="gender">Gender</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gender" value="male">
+                        <input class="form-check-input" type="radio" name="gender"
+                               value="male" <?php if ($data['gender'] == "1") {
+                            echo 'checked';
+                        } ?>>
                         <label class="form-check-label" for="male">
                             Male
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gender" value="female">
+                        <input class="form-check-input" type="radio" name="gender"
+                               value="female" <?php if ($data['gender'] == "2") {
+                            echo 'checked';
+                        } ?>>
                         <label class="form-check-label" for="female">
                             Female
                         </label>
                     </div>
+
 
                     <div class="form-group">
                         <label for="exampleInputEmail">Email address</label>
@@ -167,19 +175,19 @@ require '../layouts/sidNav.php';
                         <label for="image">Profile Image</label>
                         <input type="file" class="form-control" id="image" name="image">
                     </div>
+                    <img src="./uploads/<?php echo $data['image']; ?>" alt="" height="50px" width="50px"> <br>
 
                     <div class="form-group">
                         <label for="exampleInputPassword">Role</label>
                         <select class="form-control" id="exampleInputPassword1" name="role_id">
 
                             <?php
-                            while ($data = mysqli_fetch_assoc($RoleOp)) {
-                                ?>
-                                <option value="<?php echo $data['id']; ?>" <?php if ($data['id'] == $data['title']) {
-                                    echo 'selected';
-                                } ?>><?php echo $data['title']; ?></option>
-                            <?php }
+                            $data = mysqli_fetch_assoc($RoleOp)
                             ?>
+                            <option value="<?php echo $data['id']; ?>" <?php if ($data['id'] == $data['title']) {
+                                echo 'selected';
+                            } ?>><?php echo $data['title']; ?></option>
+
 
                         </select>
                     </div>

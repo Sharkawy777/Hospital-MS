@@ -1,18 +1,12 @@
-
-
-<?php 
+<?php
   require './helpers/dbConnection.php';
   require './helpers/functions.php';
   require './helpers/checkLogin.php';
-
 
   require './layouts/header.php';
   require './layouts/nav.php';
   require './layouts/sidNav.php';
  ?>
-
-
-            
                 <main>
                     <div class="container-fluid">
                         <h1 class="mt-4">Dashboard</h1>
@@ -83,7 +77,7 @@
                                 DataTable Example
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive">
+<!--                                <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
                                             <tr>
@@ -564,7 +558,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                </div>
+                                </div>-->
                             </div>
                         </div>
                     </div>

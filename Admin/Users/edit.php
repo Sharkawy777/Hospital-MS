@@ -111,7 +111,7 @@ require '../layouts/sidNav.php';
         <div class="card mb-4">
 
             <div class="card-body">
-                <form action="edit.php?id=<?php echo ($data['id']); ?>" method="post"
+                <form action="edit.php?id=<?php echo($data['id']); ?>" method="post"
                       enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="exampleInputName">Name</label>
@@ -121,13 +121,19 @@ require '../layouts/sidNav.php';
 
                     <label for="gender">Gender</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gender" value="male">
+                        <input class="form-check-input" type="radio" name="gender"
+                               value="male" <?php if ($data['gender'] == "1") {
+                            echo 'checked';
+                        } ?>>
                         <label class="form-check-label" for="male">
                             Male
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gender" value="female">
+                        <input class="form-check-input" type="radio" name="gender"
+                               value="female" <?php if ($data['gender'] == "2") {
+                            echo 'checked';
+                        } ?>>
                         <label class="form-check-label" for="female">
                             Female
                         </label>
@@ -167,6 +173,8 @@ require '../layouts/sidNav.php';
                         <label for="image">Profile Image</label>
                         <input type="file" class="form-control" id="image" name="image">
                     </div>
+
+                    <img src="./uploads/<?php echo $data['image']; ?>" alt="" height="50px" width="50px"> <br>
 
                     <div class="form-group">
                         <label for="exampleInputPassword">Role</label>

@@ -94,7 +94,7 @@ require '../layouts/sidNav.php';
     <div class="container-fluid">
         <h1 class="mt-4">Dashboard</h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Dashboard/Roles/Edit</li>
+            <li class="breadcrumb-item active">Dashboard/Doctor/Edit</li>
 
             <?php
             echo '<br>';
@@ -106,7 +106,8 @@ require '../layouts/sidNav.php';
             }
             ?>
         </ol>
-
+        <a href='index.php'
+           class='btn btn-danger m-r-1em'>Back</a>
 
         <div class="card mb-4">
 
@@ -121,13 +122,19 @@ require '../layouts/sidNav.php';
 
                     <label for="gender">Gender</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gender" value="male">
+                        <input class="form-check-input" type="radio" name="gender"
+                               value="male" <?php if ($data['gender'] == "1") {
+                            echo 'checked';
+                        } ?>>
                         <label class="form-check-label" for="male">
                             Male
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="gender" value="female">
+                        <input class="form-check-input" type="radio" name="gender"
+                               value="female" <?php if ($data['gender'] == "2") {
+                            echo 'checked';
+                        } ?>>
                         <label class="form-check-label" for="female">
                             Female
                         </label>

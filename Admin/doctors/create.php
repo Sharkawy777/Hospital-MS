@@ -2,29 +2,23 @@
 require '../helpers/dbConnection.php';
 require '../helpers/functions.php';
 
-############################################################################# 
-$id = $_GET['id'];
-if ($_SERVER['REQUEST_METHOD'] == "GET") {
+#########################################################################
+# Fetch Roles .... 
+$sql = "select * from roles where roles.title = 'doctor'";
+$RoleOp = mysqli_query($con, $sql);
 
-    $sql = "select * from roles";
-    $RoleOp = mysqli_query($con, $sql);
+#########################################################################
+##########################################################################
+# Fetch specialize ....
+$sql = "select * from 	specializations";
+$specializeOp = mysqli_query($con, $sql);
 
-    $sql = "select * from users where id = '$id'";
-    $op = mysqli_query($con, $sql);
+#########################################################################
 
-    if (mysqli_num_rows($op) == 1) {
-        $data = mysqli_fetch_assoc($op);
-    } else {
-        $_SESSION['Message'] = ["Message" => "Invalid Id"];
-        header("Location: index.php");
-        exit();
-    }
-}
-#############################################################################
 
-# Code ..... 
+# Code .....
 
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = Clean($_POST['name']);
     $gender = Clean($_POST['gender']);
     $email = Clean($_POST['email']);
@@ -33,12 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $phone = Clean($_POST['phone']);
     $emergencyPhone = Clean($_POST['emergencyPhone']);
     $role_id = Clean($_POST['role_id']);
+    $title = Clean($_POST['title']);
+    $specialize_id = Clean($_POST['specialize_id']);
 
     $errors = [];
 
     $errors = validate_data($name, $gender, $email, $password, $address, $phone, $emergencyPhone, $role_id, $errors);
 
     # Validate Image
+//    $errors = validate_image($errors);
     if (!Validate($_FILES['image']['name'], 1)) {
         $errors['Image'] = 'Field Required';
     } else {
@@ -56,33 +53,45 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
         }
     }
+
     if (count($errors) > 0) {
-        # Set Session ......
-        $_SESSION['Message'] = $errors;
+        $Message = $errors;
     } else {
+        // DB CODE .....
+        $disPath = './uploads/' . $FinalName;
 
-        $password = md5($password);
-        if ($gender == 'male')
-            $gender = 1;
-        elseif ($gender == 'female')
-            $gender = 2;
-        $sql = "update users set name='$name',gender='$gender',email='$email',password='$password',address='$address',phone='$phone',emergencyPhone='$emergencyPhone',image='$FinalName',role_id='$role_id' where id = '$id'";
-        $op = mysqli_query($con, $sql);
+        if (move_uploaded_file($ImgTempPath, $disPath)) {
 
-        if ($op) {
-            $Message = ["Message" => "Raw Updated"];
+            $password = md5($password);
+            if ($gender == 'male')
+                $gender = 1;
+            elseif ($gender == 'female')
+                $gender = 2;
+            $sql = "insert into `users` (`name`, `gender`, `email`, `password`,`address`,`phone`,`emergencyPhone`,`image`,`role_id`) values ('$name','$gender','$email','$password','$address','$phone','$emergencyPhone','$FinalName','$role_id')";
+            $op = mysqli_query($con, $sql);
+
+            if ($op) {
+                $doctor_id =mysqli_insert_id($con);
+                $sql = "insert into `doctor-more-info` (`title`, `specialize_id`,`doctor_id`) values ('$title','$specialize_id','$doctor_id')";
+                $op = mysqli_query($con, $sql);
+                if ($op)
+                    $Message = ['Message' => 'Raw Inserted'];
+                else
+                    $Message = ['Message' => 'Error in doctor more info Try Again ' . mysqli_error($con)];
+            } else {
+                $Message = ['Message' => 'Error Try Again ' . mysqli_error($con)];
+            }
+
         } else {
-            $Message = ["Message" => "Error Try Again " . mysqli_error($con)];
+            $Message = ['Message' => 'Error  in uploading Image  Try Again '];
         }
 
-        # Set Session ......
-        $_SESSION['Message'] = $Message;
-        header("Location: index.php");
-        exit();
-
     }
+    # Set Session ......
+    $_SESSION['Message'] = $Message;
+    header("Location: index.php");
+    exit();
 }
-
 
 require '../layouts/header.php';
 require '../layouts/nav.php';
@@ -94,7 +103,7 @@ require '../layouts/sidNav.php';
     <div class="container-fluid">
         <h1 class="mt-4">Dashboard</h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Dashboard/Roles/Edit</li>
+            <li class="breadcrumb-item active">Dashboard/Doctor/Create</li>
 
             <?php
             echo '<br>';
@@ -104,19 +113,23 @@ require '../layouts/sidNav.php';
                 # Unset Session ...
                 unset($_SESSION['Message']);
             }
-            ?>
-        </ol>
 
+            ?>
+
+        </ol>
+        <a href='index.php'
+           class='btn btn-danger m-r-1em'>Back</a>
 
         <div class="card mb-4">
 
             <div class="card-body">
-                <form action="edit.php?id=<?php echo ($data['id']); ?>" method="post"
+
+                <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post"
                       enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="exampleInputName">Name</label>
-                        <input type="text" class="form-control" id="exampleInputName" name="name"
-                               aria-describedby="" value="<?php echo $data['name']; ?>">
+                        <input type="text" class="form-control" id="exampleInputName" name="name" aria-describedby=""
+                               placeholder="Enter Name">
                     </div>
 
                     <label for="gender">Gender</label>
@@ -137,7 +150,7 @@ require '../layouts/sidNav.php';
                         <label for="exampleInputEmail">Email address</label>
                         <input type="email" class="form-control" id="exampleInputEmail1" name="email"
                                aria-describedby="emailHelp"
-                               value="<?php echo $data['email']; ?>">
+                               placeholder="Enter email">
                     </div>
 
                     <div class="form-group">
@@ -149,18 +162,18 @@ require '../layouts/sidNav.php';
                     <div class="form-group">
                         <label for="address">Address</label>
                         <input type="text" class="form-control" id="address" name="address"
-                               value="<?php echo $data['address']; ?>">
+                               placeholder="Enter your address">
                     </div>
 
                     <div class="form-group">
                         <label for="phone">Phone</label>
                         <input type="number" class="form-control" id="phone" name="phone"
-                               value="<?php echo $data['phone']; ?>">
+                               placeholder="01xxxxxxxxx">
                     </div>
                     <div class="form-group">
                         <label for="emergencyPhone">Emergency Phone</label>
                         <input type="number" class="form-control" id="emergencyPhone" name="emergencyPhone"
-                               value="<?php echo $data['phone']; ?>">
+                               placeholder="01xxxxxxxxx">
                     </div>
 
                     <div class="form-group">
@@ -175,9 +188,26 @@ require '../layouts/sidNav.php';
                             <?php
                             while ($data = mysqli_fetch_assoc($RoleOp)) {
                                 ?>
-                                <option value="<?php echo $data['id']; ?>" <?php if ($data['id'] == $data['title']) {
-                                    echo 'selected';
-                                } ?>><?php echo $data['title']; ?></option>
+                                <option value="<?php echo $data['id']; ?>"><?php echo $data['title']; ?></option>
+                            <?php }
+                            ?>
+
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="Enter your title">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputPassword">Specialize</label>
+                        <select class="form-control" id="exampleInputPassword1" name="specialize_id">
+
+                            <?php
+                            while ($data = mysqli_fetch_assoc($specializeOp)) {
+                                ?>
+                                <option value="<?php echo $data['id']; ?>"><?php echo $data['specialize']; ?></option>
                             <?php }
                             ?>
 
@@ -185,8 +215,8 @@ require '../layouts/sidNav.php';
                     </div>
                     <br>
                     <button type="submit" class="btn btn-primary">Submit</button>
-
                 </form>
+
 
             </div>
         </div>

@@ -4,7 +4,7 @@ require '../helpers/functions.php';
 
 #########################################################################
 # Fetch Roles .... 
-$sql = "select * from roles";
+$sql = "select * from roles where roles.title = 'patient'";
 $RoleOp = mysqli_query($con, $sql);
 
 #########################################################################
@@ -89,7 +89,7 @@ require '../layouts/sidNav.php';
     <div class="container-fluid">
         <h1 class="mt-4">Dashboard</h1>
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Dashboard/Users/Create</li>
+            <li class="breadcrumb-item active">Dashboard/Patient/Create</li>
 
             <?php
             echo '<br>';
@@ -103,7 +103,8 @@ require '../layouts/sidNav.php';
             ?>
 
         </ol>
-
+        <a href='index.php'
+           class='btn btn-danger m-r-1em'>Back</a>
 
         <div class="card mb-4">
 
@@ -171,11 +172,9 @@ require '../layouts/sidNav.php';
                         <select class="form-control" id="exampleInputPassword1" name="role_id">
 
                             <?php
-                            while ($data = mysqli_fetch_assoc($RoleOp)) {
+                            $data = mysqli_fetch_assoc($RoleOp)
                                 ?>
                                 <option value="<?php echo $data['id']; ?>"><?php echo $data['title']; ?></option>
-                            <?php }
-                            ?>
 
                         </select>
                     </div>
