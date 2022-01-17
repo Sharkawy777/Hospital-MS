@@ -1,11 +1,12 @@
 <?php
 require '../helpers/dbConnection.php';
 require '../helpers/functions.php';
-
+$sql = 'select users.* from users join roles on users.role_id = roles.id where roles.title = "doctor"';
+$RoleOp = mysqli_query($con, $sql);
 #############################################################################
 $id = $_GET['id'];
 
-$sql = "select * from categories where id = $id";
+$sql = "select * from appointments_doctor where id = $id";
 $op = mysqli_query($con, $sql);
 
 if (mysqli_num_rows($op) == 1) {
@@ -23,21 +24,39 @@ if (mysqli_num_rows($op) == 1) {
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
-    $title = Clean($_POST['title']);
-    $description = Clean($_POST['shortDesc']);
+    $Day = Clean($_POST['day']);
+    $StartTime = $_POST['from_time'];
+    $EndTime = $_POST['to_time'];
+    $DrId = $_POST['doctors_id'];
 
 
-    # Validate Title ....
+    # Validate day
     $errors = [];
 
-    if (!Validate($title, 1)) {
-        $errors['Title'] = "Required Field";
-    } elseif (!Validate($title, 6)) {
-        $errors['Title'] = "Invalid String";
+    # Validate Title
+    if (!Validate($Day, 1)) {
+        $errors['Title'] = 'Required Field';
     }
-    #Validate description
-    if (!Validate($title, 1)) {
-        $errors['Description'] = "Required Field";
+
+    # Validate Start Time ...
+    if (!Validate($StartTime, 1)) {
+        $errors['Start Time'] = 'Required Field';
+    } /*elseif (Validate($StartTime,8)) {
+        $errors['Start Time'] = 'Invalid time Format';
+    }*/
+
+    # Validate End Time ...
+    if (!Validate($EndTime, 1)) {
+        $errors['End Time'] = 'Required Field';
+    } /*elseif (Validate($EndTime,8)) {
+        $errors['End Time'] = 'Invalid time Format';
+    }*/
+
+    # Validate Dr id ....
+    if (!Validate($DrId, 1)) {
+        $errors['Doctor'] = 'Field Required';
+    } elseif (!Validate($DrId, 4)) {
+        $errors['Doctor'] = 'Invalid Id';
     }
 
 
@@ -46,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $_SESSION['Message'] = $errors;
     } else {
         // DB CODE .....
-        $sql = "update categories set title='$title' ,shortDesc = '$description' where id = $id";
+        $sql = "update appointments_doctor set day='$Day' , from_time= $StartTime , to_time=$EndTime,  doctors_id= $DrId, where id = $id";
         $op = mysqli_query($con, $sql);
 
         if ($op) {
@@ -99,19 +118,42 @@ require '../layouts/sidNav.php';
                     <form action="edit.php?id=<?php echo($data['id']); ?>" method="post">
 
                         <div class="form-group">
-                            <label for="exampleInputName">Title</label>
-                            <input type="text" class="form-control" id="exampleInputName" name="title"
+                            <label for="exampleInputName">Day</label>
+                            <input type="text" class="form-control" id="exampleInputName" name="day"
                                    aria-describedby=""
-                                   placeholder="Enter Title" value="<?php echo $data['title']; ?>">
+                                   placeholder="Enter Title" value="<?php echo $data['day']; ?>">
                         </div>
                         <div class="form-group">
-                            <label for="exampleInputName">Short Description</label>
-                            <input type="text" class="form-control" id="exampleInputName" name="shortDesc"
+                            <label for="exampleInputName">Start Time</label>
+                            <input type="time" class="form-control" id="exampleInputName" name="from_time"
                                    aria-describedby=""
-                                   placeholder="Enter Title" value="<?php echo $data['shortDesc']; ?>">
+                                   placeholder="Enter Time" value="<?php echo $data['from_time']; ?>">
                         </div>
+                        <div class="form-group">
+                            <label for="exampleInputName">End Time</label>
+                            <input type="time" class="form-control" id="exampleInputName" name="to_time"
+                                   aria-describedby=""
+                                   placeholder="Enter Time" value="<?php echo $data['to_time']; ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword">Doctor</label>
+                            <select class="form-control" id="exampleInputPassword1" name="doctors_id">
 
-                        <button type="submit" class="btn btn-primary">Edit</button>
+                                <?php
+                                while ($data = mysqli_fetch_assoc($RoleOp)) {
+                                    ?>
+
+                                    <option value="<?php echo $data['id']; ?>"><?php echo $data['name']; ?></option>
+
+                                <?php }
+                                ?>
+
+                            </select>
+                            <button type="submit" class="btn btn-primary">Edit</button>
+                        </div>
+                       
+
+                        
                     </form>
 
 
