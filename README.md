@@ -1,7 +1,5 @@
 # Hospital-Management-System
-# Project was developed with php native & Mysql database By ....
-1. Mahmoud Adel El-Sharkawy  .... Elsharkawy1299@gmail.com
-2. Heba El-Samalouty  .... hebaelsamalouty96@gmail.com
+# Project was developed with php native & Mysql database
 
 #The Services the System provides:
 It gives the patient complete information about:
